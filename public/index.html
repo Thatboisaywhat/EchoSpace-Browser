@@ -1,124 +1,129 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>Ultraviolet | Sophisticated Web Proxy</title>
-		<meta
-			name="description"
-			content="Ultraviolet is a highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers. Unblock sites today!"
-		/>
-		<meta
-			name="keywords"
-			content="proxy, web proxy, ultraviolet, service workers, unblock websites, unblock chromebook, free web proxy, proxy list, proxy sites, un block chromebook, online proxy, proxy server, proxysite, proxy youtube, bypass securly, bypass iboss, bypass lightspeed filter, holy unblocker, chromebooks, titanium network, unblock youtube, youtube proxy, unblocked youtube, youtube unblocked"
-		/>
-		<meta
-			name="theme-color"
-			media="(prefers-color-scheme: dark)"
-			content="#434c5e"
-		/>
-		<meta name="googlebot" content="index, follow, snippet" />
-		<link rel="shortcut icon" content="favicon.ico" />
-		<link rel="stylesheet" href="index.css" />
-		
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>EchoSpace Browser</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script src="baremux/index.js"></script>
+    <script src="uv/uv.bundle.js"></script>
+    <script src="uv/uv.config.js"></script>
+    
+    <style>
+        /* Custom UI Scrollbar styling for native browser frame aesthetics */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+    </style>
+</head>
 
-		<script src="baremux/index.js"></script>
-		<script src="uv/uv.bundle.js"></script>
-		<script src="uv/uv.config.js"></script>
+<body class="h-screen w-screen flex flex-col bg-[#090d16] text-[#e2e8f0] font-sans overflow-hidden antialiased">
 
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "FAQPage",
-				"mainEntity": [
-					{
-						"@type": "Question",
-						"name": "What is Ultraviolet (Web Proxy)?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!"
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "How do I unblock sites using Ultraviolet?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Simply head to an official site featuring Ultraviolet such as Holy Unblocker or Incognito! You can also self-host Ultraviolet on your own web server for maximum privacy."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "What if Ultraviolet is blocked or not working?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Join the Titanium Network Discord at discord.gg/unblock!"
-						}
-					}
-				]
-			}
-		</script>
-	</head>
+    <div class="w-full bg-[#0b0f19] border-b border-gray-800/80 px-4 py-3 flex items-center gap-4 z-50 shadow-md">
+        <div class="flex items-center gap-2 select-none border-r border-gray-800/80 pr-4">
+            <span class="text-xs font-black uppercase tracking-widest bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
+                EchoSpace
+            </span>
+            <span class="bg-[#1e1b4b] text-[#818cf8] border border-[#312e81] text-[10px] px-1.5 py-0.5 font-bold rounded">
+                WEB
+            </span>
+        </div>
+        
+        <form id="uv-form" class="flex-1 max-w-4xl mx-auto w-full flex items-center gap-2">
+            <input id="uv-search-engine" value="https://www.google.com/search?q=%s" type="hidden" />
+            
+            <div class="relative flex-1 w-full flex items-center">
+                <input 
+                    id="uv-address" 
+                    type="text" 
+                    placeholder="Search Google or type an address..." 
+                    class="w-full bg-[#090d16] border border-gray-800 rounded-xl pl-4 pr-10 py-1.5 text-xs text-[#f1f5f9] placeholder-gray-500 outline-none focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/20 transition-all duration-200"
+                />
+                <div class="absolute right-3.5 flex items-center pointer-events-none">
+                    <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.6)]"></div>
+                </div>
+            </div>
+            
+            <button id="uv-submit" type="submit" class="bg-[#2563eb] hover:bg-[#1d4ed8] active:scale-[0.98] text-white font-bold text-xs px-5 py-1.5 rounded-xl border border-blue-500/30 shadow-md transition-all duration-150 cursor-pointer">
+                Launch
+            </button>
+        </form>
+    </div>
 
-	<body>
-		<div
-			title="Ultraviolet Logo"
-			class="flex-center logo-wrapper header-center"
-		>
-			<img class="logo" src="uv.png" alt="Ultraviolet" />
-			<h1>Ultraviolet | TN</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Ultraviolet is highly sophisticated proxy used for evading internet
-				censorship.
-			</p>
-		</div>
+    <div class="flex-1 w-full bg-[#090d16] relative overflow-hidden">
+        
+        <iframe id="uv-frame" class="w-full h-full border-none hidden bg-white"></iframe>
+        
+        <div id="splash-deck" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center select-none z-10">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.03),transparent_55%)] pointer-events-none"></div>
+            
+            <div class="max-w-md w-full p-8 rounded-2xl border border-gray-800/40 bg-[#0b0f19]/60 backdrop-blur-md shadow-2xl relative z-20">
+                <h1 class="text-3xl font-extrabold tracking-tight text-white mb-2">
+                    EchoSpace <span class="font-normal text-cyan-400">Browser</span>
+                </h1>
+                <p class="text-xs text-gray-400 mb-6 max-w-xs mx-auto leading-relaxed">
+                    A clean, secure, integrated sandbox browsing hub built right inside your private dashboard network.
+                </p>
+                
+                <div class="w-full border-t border-gray-800/40 pt-5">
+                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-3">
+                        Instant Quick Portals
+                    </span>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="directPortal('https://www.google.com')" class="bg-[#090d16] hover:bg-[#090d16]/80 hover:border-cyan-500/40 border border-gray-800 text-left px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer">
+                            <span class="text-gray-200 block font-semibold">Google</span>
+                            <span class="text-[10px] text-gray-500">Search Engine</span>
+                        </button>
+                        <button onclick="directPortal('https://www.youtube.com')" class="bg-[#090d16] hover:bg-[#090d16]/80 hover:border-red-500/40 border border-gray-800 text-left px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer">
+                            <span class="text-gray-200 block font-semibold">YouTube</span>
+                            <span class="text-[10px] text-gray-500">Video Content</span>
+                        </button>
+                        <button onclick="directPortal('https://www.wikipedia.org')" class="bg-[#090d16] hover:bg-[#090d16]/80 hover:border-purple-500/40 border border-gray-800 text-left px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer">
+                            <span class="text-gray-200 block font-semibold">Wikipedia</span>
+                            <span class="text-[10px] text-gray-500">Encyclopedia</span>
+                        </button>
+                        <button onclick="directPortal('https://github.com')" class="bg-[#090d16] hover:bg-[#090d16]/80 hover:border-gray-500/40 border border-gray-800 text-left px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer">
+                            <span class="text-gray-200 block font-semibold">GitHub</span>
+                            <span class="text-[10px] text-gray-500">Development</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		<form id="uv-form" class="flex-center">
-			<input
-				id="uv-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="uv-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="uv-error"></p>
-			<pre id="uv-error-code"></pre>
-		</div>
-		<footer>
-			<div>
-				<a
-					title="The TitaniumNetwork GitHub organization"
-					href="https://github.com/titaniumnetwork-dev"
-					>TitaniumNetwork</a
-				>
-				<a title="The TitaniumNetwork Discord" href="https://discord.gg/unblock"
-					>Discord</a
-				>
-				<a
-					title="The TompHTTP GitHub organization"
-					href="https://github.com/tomphttp"
-					>TompHTTP</a
-				>
-				<a
-					title="The official deployment repository for Ultraviolet"
-					href="https://github.com/titaniumnetwork-dev/Ultraviolet-App"
-					>GitHub</a
-				>
-				<a title="License information" href="credits.html">Credits</a>
-			</div>
-			<div>
-				<span>Ultraviolet &copy; TN 2023</span>
-			</div>
-		</footer>
-		<iframe style="display: none" id="uv-frame"></iframe>
-		<script src="register-sw.js"></script>
-		<script src="search.js"></script>
-		<script src="index.js"></script>
-	</body>
+    <div class="hidden">
+        <p id="uv-error"></p>
+        <pre id="uv-error-code"></pre>
+    </div>
+
+    <script src="register-sw.js"></script>
+    <script src="search.js"></script>
+    <script src="index.js"></script>
+
+    <script>
+        const splashDeck = document.getElementById('splash-deck');
+        const proxyFrame = document.getElementById('uv-frame');
+        const proxyAddress = document.getElementById('uv-address');
+
+        // Watch the sandbox iframe via standard DOM observer. Reveal view window once internal system pipes data.
+        const frameObserver = new MutationObserver(() => {
+            if (proxyFrame.src && proxyFrame.src !== window.location.href && proxyFrame.style.display !== 'none') {
+                splashDeck.classList.add('hidden');
+                proxyFrame.classList.remove('hidden');
+            }
+        });
+        frameObserver.observe(proxyFrame, { attributes: true, attributeFilter: ['src', 'style'] });
+
+        // Safely triggers internal search engine proxy inputs via template scripts
+        function directPortal(destinationUrl) {
+            proxyAddress.value = destinationUrl;
+            document.getElementById('uv-form').requestSubmit();
+        }
+    </script>
+</body>
 </html>
