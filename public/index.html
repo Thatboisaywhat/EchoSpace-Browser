@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EchoSpace Browser</title>
+    <!-- Tailwind CSS for sleek styling -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="/uv/uv.bundle.js" defer></script>
-    <script src="/uv/uv.config.js" defer></script>
-    <script src="/register-sw.js" defer></script>
+    
+    <!-- DO NOT MOVE/REMOVE THESE: Core Ultraviolet internal scripts required by the server -->
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="register-sw.js" defer></script>
+    <script src="search.js" defer></script>
+    <script src="index.js" defer></script>
 </head>
 <body class="h-screen flex flex-col bg-[#090d16] text-[#e2e8f0] font-sans overflow-hidden">
 
+    <!-- Browser Navbar Layout -->
     <div class="bg-[#0f172a] border-b border-gray-800 p-3 flex items-center gap-4 shadow-lg">
         <div class="text-cyan-400 font-black tracking-wider text-xl px-2">EchoSpace</div>
         
+        <!-- Search & URL bar (Keep IDs exact so the internal scripts can find them) -->
         <form id="uv-form" class="flex-1 flex gap-2">
             <input 
                 id="uv-address" 
@@ -21,65 +28,53 @@
                 placeholder="Search Google or type a URL..." 
                 class="flex-1 bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all duration-200 shadow-inner"
             />
-            <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-sm px-6 py-2 rounded-xl transition-all shadow-md active:scale-95">
+            <button id="uv-submit" type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-sm px-6 py-2 rounded-xl transition-all shadow-md active:scale-95">
                 Launch
             </button>
         </form>
     </div>
 
+    <!-- Main Viewport Context -->
     <div class="flex-1 bg-slate-950 relative">
+        <!-- Error tracking layout required by script integrations -->
+        <div id="uv-error" class="hidden text-red-500 p-2 text-center text-xs bg-red-950/50 absolute top-0 w-full z-50"></div>
+        
+        <!-- The invisible window that will hold the websites -->
         <iframe id="uv-frame" class="w-full h-full border-none hidden bg-white"></iframe>
         
+        <!-- Welcome Splash Dashboard -->
         <div id="splash-screen" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.08),transparent_60%)]"></div>
             <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-3 tracking-tight">EchoSpace</h1>
             <p class="text-gray-400 mb-8 max-w-sm text-sm">Your decentralized, self-hosted web access portal.</p>
             
+            <!-- Quick Links -->
             <div class="flex flex-wrap justify-center gap-4 max-w-md">
-                <button onclick="quickLoad('google.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Google</button>
-                <button onclick="quickLoad('wikipedia.org')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Wikipedia</button>
-                <button onclick="quickLoad('discord.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Discord</button>
+                <button onclick="quickLoad('https://www.google.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Google</button>
+                <button onclick="quickLoad('https://www.wikipedia.org')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Wikipedia</button>
+                <button onclick="quickLoad('https://www.discord.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Discord</button>
             </div>
         </div>
     </div>
 
+    <!-- Extra UI Integration Helper -->
     <script>
-        const form = document.getElementById('uv-form');
-        const address = document.getElementById('uv-address');
-        const frame = document.getElementById('uv-frame');
-        const splash = document.getElementById('splash-screen');
+        const splashScreen = document.getElementById('splash-screen');
+        const mainFrame = document.getElementById('uv-frame');
+        const addressInput = document.getElementById('uv-address');
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            // Activate the proxy service worker environment
-            try {
-                await window.registerSW();
-            } catch (err) {
-                alert('Failed to register proxy service protocol: ' + err.message);
-                return;
+        // Watch the frame—if it gains a source link, reveal it and hide the splash screen
+        const observer = new MutationObserver(() => {
+            if (mainFrame.src && mainFrame.src !== window.location.href) {
+                splashScreen.classList.add('hidden');
+                mainFrame.classList.remove('hidden');
             }
-
-            let url = address.value.trim();
-            
-            // Turn text into a Google search query if it isn't a direct link
-            if (!url.includes('.') || url.includes(' ')) {
-                url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
-            } else if (!/^https?:\/\//i.test(url)) {
-                url = 'https://' + url;
-            }
-
-            // Reveal the browser frame, hide splash dashboard
-            splash.classList.add('hidden');
-            frame.classList.remove('hidden');
-
-            // Route the web asset through Ultraviolet encryption engine
-            frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
         });
+        observer.observe(mainFrame, { attributes: true, attributeFilter: ['src'] });
 
-        function quickLoad(target) {
-            address.value = target;
-            form.requestSubmit();
+        function quickLoad(targetUrl) {
+            addressInput.value = targetUrl;
+            document.getElementById('uv-form').requestSubmit();
         }
     </script>
 </body>
