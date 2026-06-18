@@ -1,124 +1,86 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>Ultraviolet | Sophisticated Web Proxy</title>
-		<meta
-			name="description"
-			content="Ultraviolet is a highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers. Unblock sites today!"
-		/>
-		<meta
-			name="keywords"
-			content="proxy, web proxy, ultraviolet, service workers, unblock websites, unblock chromebook, free web proxy, proxy list, proxy sites, un block chromebook, online proxy, proxy server, proxysite, proxy youtube, bypass securly, bypass iboss, bypass lightspeed filter, holy unblocker, chromebooks, titanium network, unblock youtube, youtube proxy, unblocked youtube, youtube unblocked"
-		/>
-		<meta
-			name="theme-color"
-			media="(prefers-color-scheme: dark)"
-			content="#434c5e"
-		/>
-		<meta name="googlebot" content="index, follow, snippet" />
-		<link rel="shortcut icon" content="favicon.ico" />
-		<link rel="stylesheet" href="index.css" />
-		
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoSpace Browser</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/uv/uv.bundle.js" defer></script>
+    <script src="/uv/uv.config.js" defer></script>
+    <script src="/register-sw.js" defer></script>
+</head>
+<body class="h-screen flex flex-col bg-[#090d16] text-[#e2e8f0] font-sans overflow-hidden">
 
-		<script src="baremux/index.js"></script>
-		<script src="uv/uv.bundle.js"></script>
-		<script src="uv/uv.config.js"></script>
+    <div class="bg-[#0f172a] border-b border-gray-800 p-3 flex items-center gap-4 shadow-lg">
+        <div class="text-cyan-400 font-black tracking-wider text-xl px-2">EchoSpace</div>
+        
+        <form id="uv-form" class="flex-1 flex gap-2">
+            <input 
+                id="uv-address" 
+                type="text" 
+                placeholder="Search Google or type a URL..." 
+                class="flex-1 bg-[#1e293b] border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-all duration-200 shadow-inner"
+            />
+            <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-sm px-6 py-2 rounded-xl transition-all shadow-md active:scale-95">
+                Launch
+            </button>
+        </form>
+    </div>
 
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "FAQPage",
-				"mainEntity": [
-					{
-						"@type": "Question",
-						"name": "What is Ultraviolet (Web Proxy)?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!"
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "How do I unblock sites using Ultraviolet?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Simply head to an official site featuring Ultraviolet such as Holy Unblocker or Incognito! You can also self-host Ultraviolet on your own web server for maximum privacy."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "What if Ultraviolet is blocked or not working?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Join the Titanium Network Discord at discord.gg/unblock!"
-						}
-					}
-				]
-			}
-		</script>
-	</head>
+    <div class="flex-1 bg-slate-950 relative">
+        <iframe id="uv-frame" class="w-full h-full border-none hidden bg-white"></iframe>
+        
+        <div id="splash-screen" class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-10">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.08),transparent_60%)]"></div>
+            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-3 tracking-tight">EchoSpace</h1>
+            <p class="text-gray-400 mb-8 max-w-sm text-sm">Your decentralized, self-hosted web access portal.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4 max-w-md">
+                <button onclick="quickLoad('google.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Google</button>
+                <button onclick="quickLoad('wikipedia.org')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Wikipedia</button>
+                <button onclick="quickLoad('discord.com')" class="bg-[#1e293b]/60 hover:bg-[#1e293b] border border-gray-800 px-5 py-2.5 rounded-xl text-xs font-medium transition-all hover:border-cyan-500/50">Discord</button>
+            </div>
+        </div>
+    </div>
 
-	<body>
-		<div
-			title="Ultraviolet Logo"
-			class="flex-center logo-wrapper header-center"
-		>
-			<img class="logo" src="uv.png" alt="Ultraviolet" />
-			<h1>Ultraviolet | TN</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Ultraviolet is highly sophisticated proxy used for evading internet
-				censorship.
-			</p>
-		</div>
+    <script>
+        const form = document.getElementById('uv-form');
+        const address = document.getElementById('uv-address');
+        const frame = document.getElementById('uv-frame');
+        const splash = document.getElementById('splash-screen');
 
-		<form id="uv-form" class="flex-center">
-			<input
-				id="uv-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="uv-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="uv-error"></p>
-			<pre id="uv-error-code"></pre>
-		</div>
-		<footer>
-			<div>
-				<a
-					title="The TitaniumNetwork GitHub organization"
-					href="https://github.com/titaniumnetwork-dev"
-					>TitaniumNetwork</a
-				>
-				<a title="The TitaniumNetwork Discord" href="https://discord.gg/unblock"
-					>Discord</a
-				>
-				<a
-					title="The TompHTTP GitHub organization"
-					href="https://github.com/tomphttp"
-					>TompHTTP</a
-				>
-				<a
-					title="The official deployment repository for Ultraviolet"
-					href="https://github.com/titaniumnetwork-dev/Ultraviolet-App"
-					>GitHub</a
-				>
-				<a title="License information" href="credits.html">Credits</a>
-			</div>
-			<div>
-				<span>Ultraviolet &copy; TN 2023</span>
-			</div>
-		</footer>
-		<iframe style="display: none" id="uv-frame"></iframe>
-		<script src="register-sw.js"></script>
-		<script src="search.js"></script>
-		<script src="index.js"></script>
-	</body>
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            // Activate the proxy service worker environment
+            try {
+                await window.registerSW();
+            } catch (err) {
+                alert('Failed to register proxy service protocol: ' + err.message);
+                return;
+            }
+
+            let url = address.value.trim();
+            
+            // Turn text into a Google search query if it isn't a direct link
+            if (!url.includes('.') || url.includes(' ')) {
+                url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+            } else if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+
+            // Reveal the browser frame, hide splash dashboard
+            splash.classList.add('hidden');
+            frame.classList.remove('hidden');
+
+            // Route the web asset through Ultraviolet encryption engine
+            frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
+        });
+
+        function quickLoad(target) {
+            address.value = target;
+            form.requestSubmit();
+        }
+    </script>
+</body>
 </html>
